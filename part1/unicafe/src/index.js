@@ -13,12 +13,52 @@ const Button = ({ onClick, text }) => (
   </button>
 )
 
-const Output = ({ text, num }) => (
-  <p>{text} {num}</p>
+const Statistic = ({ text, value }) => (
+    <tr>
+      <td>{text}</td>
+      <td>{value}</td>
+    </tr>
 )
 
 const Statistics = (props) => {
+    const total = () => {
+      return props.bad + props.good + props.neutral
+    }
 
+    const average = () => {
+      if(total() === 0) {
+        return 0
+      }
+      return props.score/total()
+    }
+
+    const positive = () => {
+      if(total() === 0) {
+        return 0 + '%'
+      }
+      return props.good/total()*100 + ' %'
+    }
+
+    if (total() === 0) {
+      return (
+        <>
+          <Statistic text='No feedback given' />
+        </>
+      )
+    }
+
+    return (
+      <div>
+        <table>
+          <Statistic text='good' value={props.good} />
+          <Statistic text='neutral' value={props.neutral} />
+          <Statistic text='bad' value={props.bad} />
+          <Statistic text="all" value={total()} />
+          <Statistic text='average' value={average()} />
+          <Statistic text='positive' value={positive()} />
+        </table>
+      </div>
+    )
 }
 
 const App = () => {
@@ -49,24 +89,6 @@ const App = () => {
     setToValue(score - 1)
   }
 
-  const total = () => {
-    return bad + good + neutral
-  }
-
-  const average = () => {
-    if(total() === 0) {
-      return 0
-    }
-    return score/total()
-  }
-
-  const positive = () => {
-    if(total() === 0) {
-      return 0 + '%'
-    }
-    return good/total()*100 + ' %'
-  }
-
   return (
     <div>
       <Header heading={headings.first} />
@@ -74,12 +96,7 @@ const App = () => {
       <Button onClick={handleNeutralClick} text='neutral' />
       <Button onClick={handleBadClick} text='bad' />
       <Header heading={headings.second} />
-      <Output text='good' num={good} />
-      <Output text='neutral' num={neutral} />
-      <Output text='bad' num={bad} />
-      <Output text='all' num={total()} />
-      <Output text='average' num={average()} />
-      <Output text='positive' num={positive()} />
+      <Statistics good={good} bad={bad} neutral={neutral} score={score} />
     </div>
   )
 }
